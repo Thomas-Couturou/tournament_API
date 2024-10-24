@@ -1,23 +1,103 @@
-openapi: "3.0.3"
+openapi: 3.0.0
 info:
-  title: "Application API"
-  description: "Application API"
-  version: "1.0.0"
-servers:
-  - url: "http://0.0.0.0:8080"
+  title: Tournament API
+  version: 1.0.0
+  description: |
+    This Swagger documentation file outlines the API specifications for a Tournament application built with Ktor and MongoDB.
+
 paths:
-  /:
-    get:
-      description: "Hello World!"
+  /player:
+    post:
+      summary: Create a new player
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerRequest'
       responses:
-        "200":
-          description: "OK"
+        '201':
+          description: Player created successfully
+        '400':
+          description: Bad request
+  /player/{id}:
+    get:
+      summary: Retrieve player by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
           content:
-            text/plain:
-              schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Hello World!"
+            application/json:
+              example: {}
+        '404':
+          description: Player not found
+    delete:
+      summary: Delete player by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Player deleted successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Player not found
+    patch:
+      summary: Update player by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerRequest'
+      responses:
+        '200':
+          description: Player updated successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Player not found
+
 components:
-  schemas: {}
+  schemas:
+    Player:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        pseudo:
+          type: string
+        score:
+          type: integer
+      required:
+        - id
+        - pseudo
+        - score
+
+    PlayerRequest:
+      type: object
+      properties:
+        pseudo:
+          type: string
+        score:
+          type: integer
+      required:
+        - pseudo
+        - score

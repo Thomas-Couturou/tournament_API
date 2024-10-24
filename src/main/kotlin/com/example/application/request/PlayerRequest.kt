@@ -7,12 +7,11 @@ data class PlayerRequest (
     val pseudo: String,
     val score: Int
 ){
-    fun PlayerRequest.toDomain(): Player {
+    fun toDomain(): Player {
         return Player(
             id = ObjectId(),
             pseudo = pseudo,
             score = score
         )
     }
-
 }
