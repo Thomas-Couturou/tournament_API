@@ -6,8 +6,10 @@ import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates
 import com.example.domain.entity.Player
 import com.example.domain.ports.PlayerRepository
+import com.mongodb.client.model.Sorts
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 import org.bson.BsonValue
 import org.bson.types.ObjectId
 
@@ -58,4 +60,9 @@ class PlayerRepositoryImpl (
         }
         return 0
     }
+
+    override suspend fun getPlayersSortedByScore(): List<Player> =
+        mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
+            .find().sort(Sorts.descending("score")).toList()
+
 }

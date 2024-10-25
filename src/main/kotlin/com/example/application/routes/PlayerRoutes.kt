@@ -23,7 +23,10 @@ fun Route.playerRoutes() {
 
     route("/player") {
 
-        get {  }
+        get {
+            val sortedPlayers = repository.getPlayersSortedByScore()
+            call.respond(sortedPlayers)
+        }
 
         post {
             val player = call.receive<PlayerRequest>()

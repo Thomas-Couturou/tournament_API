@@ -9,4 +9,5 @@ interface PlayerRepository {
     suspend fun deleteById(objectId: ObjectId): Long
     suspend fun findById(objectId: ObjectId): Player?
     suspend fun updateOne(objectId: ObjectId, player: Player): Long
+    suspend fun getPlayersSortedByScore(): List<Player>
 }
