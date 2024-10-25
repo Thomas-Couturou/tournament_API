@@ -4,14 +4,13 @@ import com.example.domain.entity.Player
 import org.bson.types.ObjectId
 
 data class PlayerRequest (
-    val pseudo: String,
-    val score: Int
+    val pseudo: String
 ){
     fun toDomain(): Player {
         return Player(
             id = ObjectId(),
             pseudo = pseudo,
-            score = score
+            score = 0
         )
     }
 }
