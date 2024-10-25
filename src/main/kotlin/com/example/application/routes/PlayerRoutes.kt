@@ -95,5 +95,13 @@ fun Route.playerRoutes() {
                 status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound
             )
         }
+
+        delete {
+            val delete: Long = repository.deleteAll()
+            if (delete >= 1L) {
+                return@delete call.respondText("Players Deleted successfully", status = HttpStatusCode.OK)
+            }
+            return@delete call.respondText("No player found", status = HttpStatusCode.NotFound)
+        }
     }
 }

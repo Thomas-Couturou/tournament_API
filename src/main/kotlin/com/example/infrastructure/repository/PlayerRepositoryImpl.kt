@@ -85,4 +85,13 @@ class PlayerRepositoryImpl (
         return 0
     }
 
+    override suspend fun deleteAll(): Long {
+        try {
+            val result = mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).deleteMany(Filters.empty())
+            return result.deletedCount
+        } catch (e: MongoException) {
+            System.err.println("Unable to delete due to an error: $e")
+        }
+        return 0
+    }
 }

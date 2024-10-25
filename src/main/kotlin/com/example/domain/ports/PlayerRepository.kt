@@ -12,4 +12,5 @@ interface PlayerRepository {
     suspend fun getPlayersSortedByScore(): List<Player>
     suspend fun findByPseudo(pseudo: String): Player?
     suspend fun updateOneByPseudo(pseudo: String, player: Player): Long
+    suspend fun deleteAll(): Long
 }

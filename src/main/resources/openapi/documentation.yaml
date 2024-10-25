@@ -20,6 +20,15 @@ paths:
           description: Player created successfully
         '400':
           description: Bad request
+    delete:
+      summary: Delete players
+      responses:
+        '200':
+          description: Players deleted successfully
+        '400':
+          description: Bad request
+        '404':
+          description: No Player found
   /player/byId/{id}:
     get:
       summary: Retrieve player by ID
