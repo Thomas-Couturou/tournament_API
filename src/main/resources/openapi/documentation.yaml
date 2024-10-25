@@ -14,13 +14,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlayerRequest'
+              $ref: '#/components/schemas/PlayerRequestCreate'
       responses:
         '201':
           description: Player created successfully
         '400':
           description: Bad request
-  /player/{id}:
+  /player/byId/{id}:
     get:
       summary: Retrieve player by ID
       parameters:
@@ -65,7 +65,45 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlayerRequest'
+              $ref: '#/components/schemas/PlayerRequestUpdate'
+      responses:
+        '200':
+          description: Player updated successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Player not found
+  /player/byPseudo/{pseudo}:
+    get:
+      summary: Retrieve player by Pseudo
+      parameters:
+        - name: pseudo
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: { }
+        '404':
+          description: Player not found
+    patch:
+      summary: Update player by Pseudo
+      parameters:
+        - name: pseudo
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerRequestUpdate'
       responses:
         '200':
           description: Player updated successfully
@@ -91,13 +129,18 @@ components:
         - pseudo
         - score
 
-    PlayerRequest:
+    PlayerRequestCreate:
       type: object
       properties:
         pseudo:
           type: string
+      required:
+        - pseudo
+
+    PlayerRequestUpdate:
+      type: object
+      properties:
         score:
           type: integer
       required:
-        - pseudo
         - score

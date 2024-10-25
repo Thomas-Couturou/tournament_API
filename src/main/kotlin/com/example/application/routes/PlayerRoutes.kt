@@ -1,6 +1,6 @@
 package com.example.application.routes
 
-import com.example.application.request.PlayerRequest
+import com.example.application.request.PlayerRequestCreate
 
 import com.example.domain.ports.PlayerRepository
 import io.ktor.http.HttpStatusCode
@@ -29,7 +29,7 @@ fun Route.playerRoutes() {
         }
 
         post {
-            val player = call.receive<PlayerRequest>()
+            val player = call.receive<PlayerRequestCreate>()
             val insertedId = repository.insertOne(player.toDomain())
             call.respond(HttpStatusCode.Created, "Created player with id $insertedId")
         }
@@ -46,7 +46,7 @@ fun Route.playerRoutes() {
             return@delete call.respondText("Player not found", status = HttpStatusCode.NotFound)
         }
 
-        get("/{id?}") {
+        get("byId/{id?}") {
             val id = call.parameters["id"]
             if (id.isNullOrEmpty()) {
                 return@get call.respondText(
@@ -59,12 +59,37 @@ fun Route.playerRoutes() {
             } ?: call.respondText("No player found for id $id")
         }
 
-        patch("/{id?}") {
+        patch("byId/{id?}") {
             val id = call.parameters["id"] ?: return@patch call.respondText(
                 text = "Missing player id",
                 status = HttpStatusCode.BadRequest
             )
             val updated = repository.updateOne(ObjectId(id), call.receive())
+            call.respondText(
+                text = if (updated == 1L) "Player updated successfully" else "Player not found",
+                status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound
+            )
+        }
+
+        get("byPseudo/{pseudo?}") {
+            val pseudo = call.parameters["pseudo"]
+            if (pseudo.isNullOrEmpty()) {
+                return@get call.respondText(
+                    text = "Missing pseudo",
+                    status = HttpStatusCode.BadRequest
+                )
+            }
+            repository.findByPseudo(pseudo)?.let {
+                call.respond(it.toResponse())
+            } ?: call.respondText("No player found for pseudo $pseudo")
+        }
+
+        patch("byPseudo/{pseudo?}") {
+            val pseudo = call.parameters["pseudo"] ?: return@patch call.respondText(
+                text = "Missing player pseudo",
+                status = HttpStatusCode.BadRequest
+            )
+            val updated = repository.updateOneByPseudo(pseudo, call.receive())
             call.respondText(
                 text = if (updated == 1L) "Player updated successfully" else "Player not found",
                 status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound

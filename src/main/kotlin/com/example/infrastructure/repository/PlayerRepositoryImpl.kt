@@ -65,4 +65,24 @@ class PlayerRepositoryImpl (
         mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
             .find().sort(Sorts.descending("score")).toList()
 
+    override suspend fun findByPseudo(pseudo: String): Player? =
+        mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
+            .find(Filters.eq("pseudo", pseudo))
+            .firstOrNull()
+
+    override suspend fun updateOneByPseudo(pseudo: String, player: Player): Long {
+        try {
+            val query = Filters.eq("pseudo", pseudo)
+            val updates = Updates.combine(
+                Updates.set(Player::score.name, player.score)
+            )
+            val options = UpdateOptions().upsert(true)
+            val result = mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).updateOne(query, updates, options)
+            return result.modifiedCount
+        } catch (e: MongoException) {
+            System.err.println("Unable to update due to an error: $e")
+        }
+        return 0
+    }
+
 }
