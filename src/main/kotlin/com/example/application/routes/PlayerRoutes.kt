@@ -30,11 +30,16 @@ fun Route.playerRoutes() {
 
         post {
             val player = call.receive<PlayerRequestCreate>()
-            val insertedId = repository.insertOne(player.toDomain())
-            call.respond(HttpStatusCode.Created, "Created player with id $insertedId")
+            if (repository.findByPseudo(player.pseudo) == null){
+                val insertedId = repository.insertOne(player.toDomain())
+                call.respond(HttpStatusCode.Created, "Created player with id $insertedId")
+            }
+            else {
+                call.respondText("Player already exists", status = HttpStatusCode.Conflict)
+            }
         }
 
-        delete("/{id?}") {
+        delete("byId/{id?}") {
             val id = call.parameters["id"] ?: return@delete call.respondText(
                 text = "Missing player id",
                 status = HttpStatusCode.BadRequest
