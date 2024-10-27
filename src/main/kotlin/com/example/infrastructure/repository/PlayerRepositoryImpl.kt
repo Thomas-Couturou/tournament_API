@@ -5,6 +5,7 @@ import com.mongodb.client.model.Filters
 import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates
 import com.example.domain.entity.Player
+import com.example.domain.entity.PlayerWithRank
 import com.example.domain.ports.PlayerRepository
 import com.mongodb.client.model.Sorts
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
@@ -40,10 +41,20 @@ class PlayerRepositoryImpl (
         return 0
     }
 
-    override suspend fun findById(objectId: ObjectId): Player? =
-        mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
-        .find(Filters.eq("_id", objectId))
-        .firstOrNull()
+    override suspend fun findById(objectId: ObjectId): PlayerWithRank? {
+        val players = mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
+            .find().sort(Sorts.descending("score")).toList()
+
+        var index = 1;
+        var result: PlayerWithRank? = null;
+        for (player in players){
+            if (player.id == objectId){
+                result = PlayerWithRank(player.pseudo, player.score, index)
+            }
+            index += 1;
+        }
+        return result
+    }
 
     override suspend fun updateOne(objectId: ObjectId, player: Player): Long {
         try {
@@ -61,14 +72,34 @@ class PlayerRepositoryImpl (
         return 0
     }
 
-    override suspend fun getPlayersSortedByScore(): List<Player> =
-        mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
+    override suspend fun getPlayersSortedByScore(): List<PlayerWithRank> {
+        val players =  mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
             .find().sort(Sorts.descending("score")).toList()
 
-    override suspend fun findByPseudo(pseudo: String): Player? =
-        mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
-            .find(Filters.eq("pseudo", pseudo))
-            .firstOrNull()
+        val playersWithRank = mutableListOf<PlayerWithRank>()
+        var index = 1
+        for (player in players){
+            playersWithRank.add(PlayerWithRank(player.pseudo, player.score, index))
+            index += 1
+        }
+        return playersWithRank
+    }
+
+    override suspend fun findByPseudo(pseudo: String): PlayerWithRank? {
+        val players = mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
+            .find().sort(Sorts.descending("score")).toList()
+
+        var index = 1;
+        var result: PlayerWithRank? = null;
+        for (player in players){
+            if (player.pseudo == pseudo){
+                result = PlayerWithRank(player.pseudo, player.score, index)
+            }
+            index += 1;
+        }
+        return result
+
+    }
 
     override suspend fun updateOneByPseudo(pseudo: String, player: Player): Long {
         try {

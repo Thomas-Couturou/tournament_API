@@ -9,10 +9,4 @@ data class Player(
     val id: ObjectId,
     val pseudo: String,
     val score: Int
-) {
-    fun toResponse() = PlayerResponse(
-        id = id.toString(),
-        pseudo = pseudo,
-        score = score
-    )
-}
+) {}
