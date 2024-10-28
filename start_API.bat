@@ -1,5 +1,5 @@
 setlocal EnableExtensions EnableDelayedExpansion
-call gradlew.bat build
+call gradlew.bat clean build
 
 set "CLASSPATH=build\classes\kotlin\main"
 
@@ -12,5 +12,12 @@ for /F "delims=" %%H in ('gradlew.bat -q printClasspath') do (
 )
 set "CLASSPATH=!CLASSPATH!;!DEPENDENCIES!"
 start "" java -cp "!CLASSPATH!" com.example.ApplicationKt
+
+start "" http://localhost:8080/player
+call cd angular/angular-tournament
+
+call ng build
+
+start "" call ng serve --open
 
 endlocal
