@@ -23,6 +23,10 @@ repositories {
     mavenCentral()
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-swagger-jvm")
@@ -31,12 +35,19 @@ dependencies {
     implementation("io.ktor:ktor-server-tomcat-jvm")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-config-yaml")
-    testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:$mongo_version")
 
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+
+    testImplementation("io.ktor:ktor-server-test-host-jvm")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("io.ktor:ktor-client-mock:2.0.0")
+    testImplementation("io.insert-koin:koin-test:$koin_version")
+    testImplementation("io.insert-koin:koin-test-junit5:$koin_version")
+    testImplementation("com.google.code.gson:gson:2.8.8")
 
 }

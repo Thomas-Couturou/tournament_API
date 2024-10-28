@@ -41,9 +41,7 @@ class PlayerRepositoryImpl (
         return 0
     }
 
-    override suspend fun findById(objectId: ObjectId): PlayerWithRank? {
-        val players = mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
-            .find().sort(Sorts.descending("score")).toList()
+    override suspend fun findById(objectId: ObjectId, players: List<Player>): PlayerWithRank? {
 
         var index = 1;
         var result: PlayerWithRank? = null;
@@ -72,9 +70,7 @@ class PlayerRepositoryImpl (
         return 0
     }
 
-    override suspend fun getPlayersSortedByScore(): List<PlayerWithRank> {
-        val players =  mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
-            .find().sort(Sorts.descending("score")).toList()
+    override suspend fun getPlayersSortedByScore(players: List<Player>): List<PlayerWithRank> {
 
         val playersWithRank = mutableListOf<PlayerWithRank>()
         var index = 1
@@ -85,9 +81,7 @@ class PlayerRepositoryImpl (
         return playersWithRank
     }
 
-    override suspend fun findByPseudo(pseudo: String): PlayerWithRank? {
-        val players = mongoDatabase.getCollection<Player>(PLAYER_COLLECTION).withDocumentClass<Player>()
-            .find().sort(Sorts.descending("score")).toList()
+    override suspend fun findByPseudo(pseudo: String, players: List<Player>): PlayerWithRank? {
 
         var index = 1;
         var result: PlayerWithRank? = null;
@@ -124,5 +118,10 @@ class PlayerRepositoryImpl (
             System.err.println("Unable to delete due to an error: $e")
         }
         return 0
+    }
+
+    override suspend fun getPlayersList(): List<Player> {
+        return mongoDatabase.getCollection<Player>(PLAYER_COLLECTION)
+            .find().sort(Sorts.descending("score")).toList()
     }
 }

@@ -24,13 +24,15 @@ fun Route.playerRoutes() {
     route("/player") {
 
         get {
-            val sortedPlayers = repository.getPlayersSortedByScore()
+            val players = repository.getPlayersList()
+            val sortedPlayers = repository.getPlayersSortedByScore(players)
             call.respond(sortedPlayers)
         }
 
         post {
             val player = call.receive<PlayerRequestCreate>()
-            if (repository.findByPseudo(player.pseudo) == null){
+            val players = repository.getPlayersList()
+            if (repository.findByPseudo(player.pseudo, players) == null){
                 val insertedId = repository.insertOne(player.toDomain())
                 call.respond(HttpStatusCode.Created, "Created player with id $insertedId")
             }
@@ -59,7 +61,8 @@ fun Route.playerRoutes() {
                     status = HttpStatusCode.BadRequest
                 )
             }
-            repository.findById(ObjectId(id))?.let {
+            val players = repository.getPlayersList()
+            repository.findById(ObjectId(id), players)?.let {
                 call.respond(it.toResponse())
             } ?: call.respondText("No player found for id $id")
         }
@@ -84,7 +87,8 @@ fun Route.playerRoutes() {
                     status = HttpStatusCode.BadRequest
                 )
             }
-            repository.findByPseudo(pseudo)?.let {
+            val players = repository.getPlayersList()
+            repository.findByPseudo(pseudo, players)?.let {
                 call.respond(it.toResponse())
             } ?: call.respondText("No player found for pseudo $pseudo")
         }
