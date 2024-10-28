@@ -42,6 +42,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-server-config-yaml")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    implementation("io.ktor:ktor-server-cors:2.1.0")
 
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:$mongo_version")
 
