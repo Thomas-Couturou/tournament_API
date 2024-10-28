@@ -27,6 +27,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.register("printClasspath") {
+    doLast {
+        println(configurations.runtimeClasspath.get().asPath)
+    }
+}
+
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-swagger-jvm")
